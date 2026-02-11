@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Loader } from 'lucide-react';
-import { geminiService } from '../services/geminiService';
+import { openRouterService } from '../services/openRouterService';
 
 const Chatbot = () => {
     const [messages, setMessages] = useState([]);
@@ -11,10 +11,10 @@ const Chatbot = () => {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        // Initialize Gemini AI
-        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        // Initialize OpenRouter AI
+        const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
         if (apiKey) {
-            const initialized = geminiService.initialize(apiKey);
+            const initialized = openRouterService.initialize(apiKey);
             setIsInitialized(initialized);
         }
 
@@ -62,7 +62,7 @@ const Chatbot = () => {
         setIsLoading(true);
 
         try {
-            const response = await geminiService.sendMessage(currentInput);
+            const response = await openRouterService.sendMessage(currentInput);
             setMessages((prev) => [
                 ...prev,
                 {
@@ -78,6 +78,17 @@ const Chatbot = () => {
 
             if (error.message === 'RATE_LIMITED') {
                 errorMessage = "I apologize, but I've reached my request limit. Please try again in about a minute.";
+            } else if (error.message?.includes('API key')) {
+                errorMessage = 'API key configuration issue. Please contact the site administrator.';
+            } else if (error.message?.includes('quota')) {
+                errorMessage = 'API quota exceeded. Please try again later.';
+            } else if (error.message?.includes('SAFETY')) {
+                errorMessage = 'Your message was flagged by content filters. Please rephrase your question.';
+            } else {
+                // Show actual error in development
+                if (import.meta.env.DEV) {
+                    errorMessage = `Error: ${error.message || 'Unknown error occurred'}`;
+                }
             }
 
             setMessages((prev) => [
@@ -132,8 +143,8 @@ const Chatbot = () => {
                             >
                                 <div
                                     className={`max-w-[80%] p-3 rounded-lg ${message.isUser
-                                            ? 'bg-brand-accent text-white'
-                                            : 'bg-light-bg dark:bg-dark-bg text-light-primary dark:text-dark-primary'
+                                        ? 'bg-brand-accent text-white'
+                                        : 'bg-light-bg dark:bg-dark-bg text-light-primary dark:text-dark-primary'
                                         }`}
                                 >
                                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>

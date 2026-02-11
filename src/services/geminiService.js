@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 const SYSTEM_PROMPT = `You are an AI assistant for this portfolio website. Your responses should:
 1. Draw information solely from the content available on this portfolio
@@ -10,22 +10,22 @@ Please maintain a professional and helpful tone while staying within these const
 
 class GeminiService {
     constructor() {
-        this.genAI = null;
-        this.model = null;
+        this.client = null;
         this.isRateLimited = false;
         this.rateLimitTimer = null;
         this.RATE_LIMIT_DELAY = 60000; // 1 minute
     }
 
     initialize(apiKey) {
-        if (!apiKey) {
+        if (!apiKey || apiKey === 'your_api_key_here') {
             console.error('Gemini API key is required');
             return false;
         }
 
         try {
-            this.genAI = new GoogleGenerativeAI(apiKey);
-            this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+            // Initialize the new SDK client
+            this.client = new GoogleGenAI({ apiKey: apiKey });
+            console.log('Gemini AI initialized successfully with NEW SDK');
             return true;
         } catch (error) {
             console.error('Failed to initialize Gemini AI:', error);
@@ -44,7 +44,7 @@ class GeminiService {
     }
 
     async sendMessage(userMessage) {
-        if (!this.model) {
+        if (!this.client) {
             throw new Error('Gemini AI not initialized. Please provide an API key.');
         }
 
@@ -54,9 +54,14 @@ class GeminiService {
 
         try {
             const prompt = `${SYSTEM_PROMPT}\n\nUser Question: ${userMessage}`;
-            const result = await this.model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
+
+            // Use the new SDK's generate method
+            const response = await this.client.models.generateContent({
+                model: 'gemini-2.0-flash',
+                contents: prompt
+            });
+
+            const text = response.text;
 
             if (!text) {
                 throw new Error('Empty response received');
@@ -64,12 +69,26 @@ class GeminiService {
 
             return text;
         } catch (error) {
+            console.error('Gemini API Error:', error);
+
             // Check for rate limiting
-            if (error.message?.includes('429') || error.status === 429) {
+            if (error.message?.includes('429') || error.status === 429 || error.message?.includes('quota')) {
                 this.handleRateLimit();
                 throw new Error('RATE_LIMITED');
             }
-            throw error;
+
+            // Check for API key issues
+            if (error.message?.includes('API_KEY') || error.message?.includes('API key') || error.status === 400) {
+                throw new Error('API key invalid or not configured properly');
+            }
+
+            // Check for safety/content filter
+            if (error.message?.includes('SAFETY')) {
+                throw new Error('SAFETY');
+            }
+
+            // Re-throw with original message for debugging
+            throw new Error(error.message || 'Failed to get response from Gemini AI');
         }
     }
 }
