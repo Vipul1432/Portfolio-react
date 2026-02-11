@@ -1,5 +1,8 @@
 {
-    "name": "vercel-deployment",
-    "version": "1.0.0",
-    "description": "Vercel deployment configuration for React Portfolio"
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
 }
