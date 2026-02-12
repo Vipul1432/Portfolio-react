@@ -1,5 +1,6 @@
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTheme }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -9,68 +10,125 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
         setIsMobileMenuOpen(false);
     };
 
+    const mobileMenuVariants = {
+        hidden: { opacity: 0, height: 0 },
+        visible: {
+            opacity: 1,
+            height: 'auto',
+            transition: {
+                duration: 0.3,
+                when: 'beforeChildren',
+                staggerChildren: 0.1,
+            },
+        },
+        exit: {
+            opacity: 0,
+            height: 0,
+            transition: { duration: 0.2 },
+        },
+    };
+
+    const mobileItemVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: { opacity: 1, x: 0 },
+    };
+
     return (
-        <header className="bg-light-surface dark:bg-dark-surface text-light-primary dark:text-dark-primary p-4 shadow-lg border-b border-light-border dark:border-dark-border sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
+        <motion.header
+            className="glass-dark text-light-primary dark:text-dark-primary p-4 shadow-lg border-b border-light-border dark:border-dark-border sticky top-0 z-50"
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <div className="flex justify-between items-center max-w-7xl mx-auto">
-                <div className="text-xl font-bold text-brand-accent">Vipul Kumar</div>
+                <motion.div
+                    className="text-xl font-bold gradient-text"
+                    whileHover={{ scale: 1.05 }}
+                >
+                    Vipul Kumar
+                </motion.div>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex space-x-6">
+                <nav className="hidden md:flex space-x-2">
                     {navItems.map((item) => (
-                        <button
+                        <motion.button
                             key={item.path}
                             onClick={() => scrollToSection(item.path)}
-                            className={`px-4 py-2 hover:bg-brand-accent hover:text-white rounded-lg cursor-pointer transition-all duration-300 text-sm font-medium ${activeSection === item.path
+                            className={`px-4 py-2 rounded-lg cursor-pointer text-sm font-medium relative overflow-hidden ${activeSection === item.path
                                     ? 'bg-brand-accent text-white'
                                     : 'text-light-primary dark:text-dark-primary'
                                 }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                         >
                             {item.label}
-                        </button>
+                            {activeSection === item.path && (
+                                <motion.div
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
+                                    layoutId="activeSection"
+                                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                />
+                            )}
+                        </motion.button>
                     ))}
                 </nav>
 
                 <div className="flex items-center space-x-2">
                     {/* Theme Toggle */}
-                    <button
+                    <motion.button
                         onClick={toggleTheme}
                         id="theme-toggle-button"
                         className="p-2 rounded-lg hover:bg-light-accent-bg dark:hover:bg-dark-accent-bg text-light-secondary dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
                         aria-label="Toggle theme"
+                        whileHover={{ scale: 1.1, rotate: 180 }}
+                        whileTap={{ scale: 0.9 }}
                     >
                         {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-                    </button>
+                    </motion.button>
 
                     {/* Mobile Menu Toggle */}
-                    <button
+                    <motion.button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className="md:hidden p-2 rounded-lg hover:bg-light-accent-bg dark:hover:bg-dark-accent-bg text-light-secondary dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
                         aria-label="Toggle menu"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+                    </motion.button>
                 </div>
             </div>
 
             {/* Mobile Navigation */}
-            {isMobileMenuOpen && (
-                <nav className="md:hidden mt-4 pb-4 space-y-2 animate-fadeInUp">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.path}
-                            onClick={() => handleNavClick(item.path)}
-                            className={`w-full text-left px-4 py-3 hover:bg-brand-accent hover:text-white rounded-lg cursor-pointer transition-all duration-300 text-sm font-medium ${activeSection === item.path
-                                    ? 'bg-brand-accent text-white'
-                                    : 'text-light-primary dark:text-dark-primary'
-                                }`}
-                        >
-                            {item.label}
-                        </button>
-                    ))}
-                </nav>
-            )}
-        </header>
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.nav
+                        className="md:hidden mt-4 pb-4 space-y-2 overflow-hidden"
+                        variants={mobileMenuVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                    >
+                        {navItems.map((item) => (
+                            <motion.button
+                                key={item.path}
+                                onClick={() => handleNavClick(item.path)}
+                                className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer text-sm font-medium ${activeSection === item.path
+                                        ? 'bg-brand-accent text-white'
+                                        : 'text-light-primary dark:text-dark-primary hover:bg-brand-accent hover:text-white'
+                                    }`}
+                                variants={mobileItemVariants}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                {item.label}
+                            </motion.button>
+                        ))}
+                    </motion.nav>
+                )}
+            </AnimatePresence>
+        </motion.header>
     );
 };
 
 export default Header;
+

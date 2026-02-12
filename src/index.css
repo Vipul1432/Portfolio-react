@@ -26,11 +26,19 @@
 body {
   margin: 0;
   min-height: 100vh;
+  cursor: none; /* Hide default cursor for custom cursor */
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Show default cursor on touch devices */
+@media (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
 }
 
 /* Custom scrollbar */
@@ -50,6 +58,36 @@ html {
   @apply bg-brand-accent;
 }
 
+/* Glassmorphism utility classes */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #007BFF 0%, #00D4FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animated-gradient {
+    background: linear-gradient(270deg, #007BFF, #00D4FF, #007BFF);
+    background-size: 200% 200%;
+    animation: gradient 8s ease infinite;
+  }
+}
+
 /* Animations */
 @keyframes fadeInUp {
   from {
@@ -65,4 +103,31 @@ html {
 
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out;
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    cursor: auto;
+  }
+}
+
+/* Hide custom cursor elements on reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor,
+  .cursor-trail {
+    display: none !important;
+  }
 }
