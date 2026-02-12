@@ -62,13 +62,6 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                             whileTap={{ scale: 0.95 }}
                         >
                             {item.label}
-                            {activeSection === item.path && (
-                                <motion.div
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
-                                    layoutId="activeSection"
-                                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                                />
-                            )}
                         </motion.button>
                     ))}
                 </nav>
@@ -114,8 +107,8 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                                 key={item.path}
                                 onClick={() => handleNavClick(item.path)}
                                 className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer text-sm font-medium ${activeSection === item.path
-                                        ? 'bg-brand-accent text-white'
-                                        : 'text-gray-700 dark:text-dark-primary hover:bg-brand-accent hover:text-white'
+                                    ? 'bg-brand-accent text-white'
+                                    : 'text-gray-700 dark:text-dark-primary hover:bg-brand-accent hover:text-white'
                                     }`}
                                 variants={mobileItemVariants}
                                 whileTap={{ scale: 0.98 }}
