@@ -35,7 +35,7 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
 
     return (
         <motion.header
-            className="glass-dark text-light-primary dark:text-dark-primary p-4 shadow-lg border-b border-light-border dark:border-dark-border sticky top-0 z-50"
+            className="bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md text-gray-900 dark:text-dark-primary p-4 shadow-lg border-b border-gray-200 dark:border-dark-border sticky top-0 z-50"
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
@@ -55,8 +55,8 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                             key={item.path}
                             onClick={() => scrollToSection(item.path)}
                             className={`px-4 py-2 rounded-lg cursor-pointer text-sm font-medium relative overflow-hidden ${activeSection === item.path
-                                    ? 'bg-brand-accent text-white'
-                                    : 'text-light-primary dark:text-dark-primary'
+                                ? 'bg-brand-accent text-white'
+                                : 'text-gray-700 dark:text-dark-primary hover:text-brand-accent dark:hover:text-brand-accent'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -78,7 +78,7 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                     <motion.button
                         onClick={toggleTheme}
                         id="theme-toggle-button"
-                        className="p-2 rounded-lg hover:bg-light-accent-bg dark:hover:bg-dark-accent-bg text-light-secondary dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
+                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-accent-bg text-gray-600 dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
                         aria-label="Toggle theme"
                         whileHover={{ scale: 1.1, rotate: 180 }}
                         whileTap={{ scale: 0.9 }}
@@ -89,7 +89,7 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                     {/* Mobile Menu Toggle */}
                     <motion.button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="md:hidden p-2 rounded-lg hover:bg-light-accent-bg dark:hover:bg-dark-accent-bg text-light-secondary dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
+                        className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-accent-bg text-gray-600 dark:text-dark-secondary hover:text-brand-accent transition-all duration-300"
                         aria-label="Toggle menu"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
@@ -115,7 +115,7 @@ const Header = ({ navItems, activeSection, scrollToSection, isDarkMode, toggleTh
                                 onClick={() => handleNavClick(item.path)}
                                 className={`w-full text-left px-4 py-3 rounded-lg cursor-pointer text-sm font-medium ${activeSection === item.path
                                         ? 'bg-brand-accent text-white'
-                                        : 'text-light-primary dark:text-dark-primary hover:bg-brand-accent hover:text-white'
+                                        : 'text-gray-700 dark:text-dark-primary hover:bg-brand-accent hover:text-white'
                                     }`}
                                 variants={mobileItemVariants}
                                 whileTap={{ scale: 0.98 }}
