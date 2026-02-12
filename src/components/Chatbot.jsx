@@ -169,20 +169,20 @@ const Chatbot = () => {
 
                     {/* Input */}
                     <div className="p-4 border-t border-light-border dark:border-dark-border">
-                        <div className="flex space-x-2">
+                        <div className="flex gap-2 items-center">
                             <input
                                 type="text"
                                 value={userInput}
                                 onChange={(e) => setUserInput(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Type your message..."
-                                className="flex-1 px-4 py-2 rounded-lg bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border text-light-primary dark:text-dark-primary focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm"
+                                className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border text-light-primary dark:text-dark-primary focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm"
                                 disabled={isLoading}
                             />
                             <button
                                 onClick={handleSendMessage}
                                 disabled={isLoading || !userInput.trim()}
-                                className="bg-brand-accent text-white p-2 rounded-lg hover:bg-brand-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-shrink-0 bg-brand-accent text-white p-2 rounded-lg hover:bg-brand-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Send size={20} />
                             </button>
